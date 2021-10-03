@@ -1,6 +1,6 @@
 /**
  *  @file   position_controller.h
- *  @brief  rotors quadrotor position control's related functionality declaration & definition
+ *  @brief  quadrotor's position control related functionality declaration & definition
  *  @author neo
  *  @data   03.10.2021
  */
@@ -37,7 +37,7 @@ class PositionController {
 
  protected:
  private:
-};
+};  /* class PositionController */
 
 } /* namespace position_controller */
 

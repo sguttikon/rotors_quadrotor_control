@@ -1,6 +1,6 @@
 /**
  *  @file   position_controller.cpp
- *  @brief  rotors quadrotor position control's related functionality implementation
+ *  @brief  quadrotor's position control related functionality implementation
  *  @author neo
  *  @data   03.10.2021
  */
