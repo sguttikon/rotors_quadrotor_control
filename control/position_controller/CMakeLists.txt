@@ -13,9 +13,9 @@ catkin_simple(ALL_DEPS_REQUIRED)
 ###########
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/position_controller.cpp
-# )
+add_library(${PROJECT_NAME}
+  src/${PROJECT_NAME}/position_controller.cpp
+)
 
 ## Declare a C++ executable
 # add_executable(${PROJECT_NAME}_node src/position_controller_node.cpp)
