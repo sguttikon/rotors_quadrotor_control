@@ -41,12 +41,12 @@ struct QuadrotorStateEstimate {
       ///////////////////////////////////////////////////
 
   /**
-   *  @brief QuadrotorStateEstimate's default constructor called when an instance is created.
+   *  @brief QuadrotorStateEstimate's default constructor, called when an instance is created.
    */
   QuadrotorStateEstimate();
 
   /**
-   *  @brief QuadrotorStateEstimate's default destructor called when an instance is destroyed.
+   *  @brief QuadrotorStateEstimate's default destructor, called when an instance is destroyed.
    */
   ~QuadrotorStateEstimate();
 
@@ -57,7 +57,7 @@ struct QuadrotorStateEstimate {
   //  @brief  The timestamp of quadrotor's state estimate
   ros::Time timestamp;
 
-  //  @brief  The coordinate frame w.r.t the quadrotor's state is estimated.
+  //  @brief  The coordinate frame used to estimate the quadrotor's state.
   CoordinateFrame coordinate_frame;
 
   //  @brief  The 3d position of quadrotor in coordinate frame.
@@ -66,10 +66,10 @@ struct QuadrotorStateEstimate {
   //  @brief The quaternion orientation of quadrotor in coordinate frame.
   Eigen::Quaterniond orientation;
 
-  //  @brief  The 3d position's 1st time derivative of quadrotor in coordinate frame.
+  //  @brief  The 3d linear 1st time derivative of quadrotor in coordinate frame.
   Eigen::Vector3d velocity;
 
-  //  @brief  The 3d orientation's 1st time derivative of quadrotor in body coordinate frame.
+  //  @brief  The 3d angular 1st time derivative of quadrotor in body coordinate frame.
   Eigen::Vector3d bodyrates;
 
 };  /* struct QuadrotorStateEstimate */

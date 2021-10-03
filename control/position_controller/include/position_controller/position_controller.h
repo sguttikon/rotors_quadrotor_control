@@ -26,12 +26,12 @@ class PositionController {
         ///////////////////////////////////////////////////
 
     /**
-     *  @brief  PositionController's default constructor called when an instance is created.
+     *  @brief  PositionController's default constructor, called when an instance is created.
      */
     PositionController();
 
     /**
-     *  @brief  PositionController's default destructor called when an instance is destroyed.
+     *  @brief  PositionController's default destructor, called when an instance is destroyed.
      */
     ~PositionController();
 
