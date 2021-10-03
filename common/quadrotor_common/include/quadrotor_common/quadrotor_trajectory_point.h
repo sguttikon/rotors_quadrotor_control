@@ -45,7 +45,7 @@ struct QuadrotorTrajectoryPoint {
   Eigen::Quaterniond orientation;
 
   // TODO: w.r.t which coordinate frame the following values are calculated ?
-  //  @brief  The quadrotor's heading angle [rad] at given instance of a trajectory.
+  //  @brief  The quadrotor's heading angle [rad] at given instance of a trajectory w.r.t world frame.
   double heading;
 
   //  @brief  The 3d linear time derivatives of quadrotor.
