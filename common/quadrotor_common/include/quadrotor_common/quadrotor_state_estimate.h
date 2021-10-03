@@ -1,11 +1,11 @@
 /**
- *  @file   state_estimate.h
+ *  @file   quadrotor_state_estimate.h
  *  @brief  quadrotor's state estimation related functionality declaration & definition
  *  @author neo
  *  @data   03.10.2021
  */
-#ifndef QUADROTOR_COMMON_QUATERNION_STATE_ESTIMATE_H
-#define QUADROTOR_COMMON_QUATERNION_STATE_ESTIMATE_H
+#ifndef QUADROTOR_COMMON_QUADROTOR_STATE_ESTIMATE_H
+#define QUADROTOR_COMMON_QUADROTOR_STATE_ESTIMATE_H
 
 // 3rd party dependencies
 #include <Eigen/Dense>
@@ -14,7 +14,7 @@
 namespace quadrotor_common {
 
 /**
- *  @brief  QuadrotorStateEstimate class implementation.
+ *  @brief  QuadrotorStateEstimate struct implementation.
  *  @detail Contains information about quadrotor's state w.r.t coordinate frame, namely:
  *          the 3d position, 3d velocity, quaternion orientation, 3d bodyrates
  */
@@ -66,14 +66,14 @@ struct QuadrotorStateEstimate {
   //  @brief The quaternion orientation of quadrotor in coordinate frame.
   Eigen::Quaterniond orientation;
 
-  //  @brief  The 3d position's derivative of quadrotor in coordinate frame.
+  //  @brief  The 3d position's 1st time derivative of quadrotor in coordinate frame.
   Eigen::Vector3d velocity;
 
-  //  @brief  The 3d orientation's derivative of quadrotor in body coordinate frame.
+  //  @brief  The 3d orientation's 1st time derivative of quadrotor in body coordinate frame.
   Eigen::Vector3d bodyrates;
 
-};  /* class QuadrotorStateEstimate */
+};  /* struct QuadrotorStateEstimate */
 
 } /* namespace quadrotor_common */
 
-#endif  /* QUADROTOR_COMMON_QUATERNION_STATE_ESTIMATE_H */
+#endif  /* QUADROTOR_COMMON_QUADROTOR_STATE_ESTIMATE_H */
