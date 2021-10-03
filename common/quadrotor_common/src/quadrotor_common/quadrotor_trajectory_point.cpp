@@ -12,7 +12,7 @@
 namespace quadrotor_common {
 
 /**
- *  @detail QuadrotorTrajectoryPoint's default constructor definition
+ *  @detail QuadrotorTrajectoryPoint's default constructor definition.
  */
 QuadrotorTrajectoryPoint::QuadrotorTrajectoryPoint()
     : position(Eigen::Vector3d::Zero()),
@@ -30,7 +30,7 @@ QuadrotorTrajectoryPoint::QuadrotorTrajectoryPoint()
       heading_acceleration(0.0) {}
 
 /**
- *  @detail QuadrotorTrajectoryPoint's default destructor definition
+ *  @detail QuadrotorTrajectoryPoint's default destructor definition.
  */
 QuadrotorTrajectoryPoint::~QuadrotorTrajectoryPoint() {}
 

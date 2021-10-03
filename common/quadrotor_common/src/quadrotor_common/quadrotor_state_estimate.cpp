@@ -13,7 +13,7 @@
 namespace quadrotor_common {
 
 /**
- *  @detail QuadrotorStateEstimate's default constructor definition
+ *  @detail QuadrotorStateEstimate's default constructor definition.
  */
 QuadrotorStateEstimate::QuadrotorStateEstimate()
     : timestamp(ros::Time::now()),
@@ -24,7 +24,7 @@ QuadrotorStateEstimate::QuadrotorStateEstimate()
       bodyrates(Eigen::Vector3d::Zero()) {}
 
 /**
- *  @detail QuadrotorStateEstimate's default destructor definition
+ *  @detail QuadrotorStateEstimate's default destructor definition.
  */
 QuadrotorStateEstimate::~QuadrotorStateEstimate() {}
 

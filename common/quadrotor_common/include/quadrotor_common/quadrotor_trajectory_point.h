@@ -35,7 +35,7 @@ struct QuadrotorTrajectoryPoint {
   ~QuadrotorTrajectoryPoint();
 
       //////////////////////////////////////
-      //////////// Data Members ///////////
+      ///////////// Data Members ///////////
       //////////////////////////////////////
 
   //  @brief  The 3d position [m] of quadrotor at given instance of a trajectory.
@@ -60,7 +60,7 @@ struct QuadrotorTrajectoryPoint {
   Eigen::Vector3d angular_jerk;
   Eigen::Vector3d angular_snap;
 
-  //  @brief  The angle time derivatives of quadrotor's heading
+  //  @brief  The angle time derivatives of quadrotor's heading.
   double heading_rate;
   double heading_acceleration;
 

@@ -51,10 +51,10 @@ struct QuadrotorStateEstimate {
   ~QuadrotorStateEstimate();
 
       //////////////////////////////////////
-      //////////// Data Members ///////////
+      ///////////// Data Members ///////////
       //////////////////////////////////////
 
-  //  @brief  The timestamp of quadrotor's state estimate
+  //  @brief  The timestamp of quadrotor's state estimate.
   ros::Time timestamp;
 
   //  @brief  The coordinate frame used to estimate the quadrotor's state.
@@ -63,7 +63,7 @@ struct QuadrotorStateEstimate {
   //  @brief  The 3d position [m] of quadrotor in coordinate frame.
   Eigen::Vector3d position;
 
-  //  @brief The quaternion orientation of quadrotor in coordinate frame.
+  //  @brief  The quaternion orientation of quadrotor in coordinate frame.
   Eigen::Quaterniond orientation;
 
   //  @brief  The 3d linear time derivative of quadrotor in coordinate frame.
