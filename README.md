@@ -13,7 +13,7 @@
   ```
     $ mkdir -p ~/catkin_ws/src
   ```
-3. Get the required code.
+2. Get the required code.
   ```
     $ cd ~/catkin_ws/src
     ~/catkin_ws/src $ git clone git@github.com:ethz-asl/rotors_simulator.git
@@ -21,9 +21,9 @@
     ~/catkin_ws/src $ git clone git@github.com:catkin/catkin_simple.git
     ~/catkin_ws/src $ git clone git@github.com:ethz-asl/eigen_catkin.git
   ```
-5. Build the ros workspace.
+3. Build the ros workspace.
   ```
     ~/catkin_ws/src $ cd ~/catkin_ws/
     ~/catkin_ws $ catkin build
   ```
-7. 
+4. 
