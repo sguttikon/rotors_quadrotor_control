@@ -31,7 +31,7 @@ class PositionController {
     PositionController();
 
     /**
-     *  @brief  PositionController's default destructor called when an instace is destroyed.
+     *  @brief  PositionController's default destructor called when an instance is destroyed.
      */
     ~PositionController();
 
