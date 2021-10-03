@@ -38,14 +38,14 @@ struct QuadrotorTrajectoryPoint {
       //////////// Data Members ///////////
       //////////////////////////////////////
 
-  //  @brief  The 3d position of quadrotor at given instance of a trajectory.
+  //  @brief  The 3d position [m] of quadrotor at given instance of a trajectory.
   Eigen::Vector3d position;
 
-  //  @brief  The quaternion orientation of quadrotor at given instance of a trajectory.
+  //  @brief  The quaternion orientation [-] of quadrotor at given instance of a trajectory.
   Eigen::Quaterniond orientation;
 
   // TODO: w.r.t which coordinate frame the following values are calculated ?
-  //  @brief  The quadrotor's heading angle.
+  //  @brief  The quadrotor's heading angle [rad] at given instance of a trajectory.
   double heading;
 
   //  @brief  The 3d linear time derivatives of quadrotor.

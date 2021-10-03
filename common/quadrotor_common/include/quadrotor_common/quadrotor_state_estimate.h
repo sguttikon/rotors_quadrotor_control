@@ -60,16 +60,16 @@ struct QuadrotorStateEstimate {
   //  @brief  The coordinate frame used to estimate the quadrotor's state.
   CoordinateFrame coordinate_frame;
 
-  //  @brief  The 3d position of quadrotor in coordinate frame.
+  //  @brief  The 3d position [m] of quadrotor in coordinate frame.
   Eigen::Vector3d position;
 
   //  @brief The quaternion orientation of quadrotor in coordinate frame.
   Eigen::Quaterniond orientation;
 
-  //  @brief  The 3d linear 1st time derivative of quadrotor in coordinate frame.
+  //  @brief  The 3d linear time derivative of quadrotor in coordinate frame.
   Eigen::Vector3d velocity;
 
-  //  @brief  The 3d angular 1st time derivative of quadrotor in body coordinate frame.
+  //  @brief  The 3d angular time derivative of quadrotor in body coordinate frame.
   Eigen::Vector3d bodyrates;
 
 };  /* struct QuadrotorStateEstimate */

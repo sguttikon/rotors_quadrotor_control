@@ -15,7 +15,7 @@ namespace position_controller {
 /**
  *  @brief  PositionController class implementation.
  *  @detail The high-level position control outputs the desired orientation, the desired collective thrust command,
- *          the desired body rates, and the desired angular accelerations.
+ *          the desired body rates, and the desired angular acceleration.
  */
 class PositionController {
  public:

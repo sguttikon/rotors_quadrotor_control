@@ -14,6 +14,7 @@ catkin_simple(ALL_DEPS_REQUIRED)
 
 ## Declare a C++ library
 cs_add_library(${PROJECT_NAME}
+  src/quadrotor_common/quadrotor_control_command.cpp
   src/quadrotor_common/quadrotor_state_estimate.cpp
   src/quadrotor_common/quadrotor_trajectory_point.cpp
 )
