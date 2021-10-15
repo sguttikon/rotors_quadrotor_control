@@ -58,9 +58,15 @@ quadrotor_common::QuadrotorControlCommand PositionController::computeNominalRefe
   const Eigen::Vector3d x_C = q_heading * Eigen::Vector3d::UnitX();
   const Eigen::Vector3d y_C = q_heading * Eigen::Vector3d::UnitY();
 
-  // 1. compute reference orientation input i.e. R_ref = [x_B y_B z_B]
+  // 1. compute quadrotor's reference orientation input i.e. R_ref = [x_B y_B z_B]
   const Eigen::Vector3d x_B = computeRobustBodyXAxis(y_C, acceleration, attitude_estimate, x_C);
   const Eigen::Vector3d y_B = computeRobustBodyYAxis(x_B, acceleration, attitude_estimate, y_C);
+  const Eigen::Vector3d z_B = x_B.cross(y_B);
+  const Eigen::Matrix3d R_W_B((Eigen::Matrix3d() << x_B, y_B, z_B).finished());
+  const Eigen::Quaterniond q_W_B = Eigen::Quaterniond(R_W_B);
+
+  // 2. compute quadrotor's reference collective thrust input i.e. c_ref
+  const double c = z_B.dot(acceleration);
 }
 
 /**
@@ -77,11 +83,11 @@ Eigen::Vector3d PositionController::computeRobustBodyXAxis(
   // check if y_C is collinear to alpha
   if (isAlmostZero(x_B.norm())) {
 
-    // project estimated x_B into x_C - z_C plane using scalar projection onto y_C
+    // project estimated x_B into x_C - z_C plane using scalar projection onto y_C, followed by vector rejection
     const Eigen::Vector3d x_B_est = attitude_estimate * Eigen::Vector3d::UnitX();
     const Eigen::Vector3d x_B_proj = x_B_est - (x_B_est.dot(y_C)) * y_C;
     if (isAlmostZero(x_B_proj.norm()))
-      x_B = x_C;
+      x_B = x_C;  // special case which may lead to jumps in the desired orientation
     else
       x_B = x_B_proj.normalized();
 
@@ -111,7 +117,7 @@ Eigen::Vector3d PositionController::computeRobustBodyYAxis(
     const Eigen::Vector3d z_B_est = attitude_estimate * Eigen::Vector3d::UnitZ();
     y_B = z_B_est.cross(x_B);
     if (isAlmostZero(y_B.norm()))
-      y_B = y_C;
+      y_B = y_C;  // special case which may lead to jumps in the desired orientation
     else
       y_B.normalize();
 
