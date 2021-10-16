@@ -39,9 +39,8 @@ cs_export()
 #############
 
 ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test
-  test/test_position_controller.cpp
-)
-if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-endif()
+catkin_add_gtest(test_position_controller test/test_position_controller.cpp)
+target_link_libraries(test_position_controller ${PROJECT_NAME})
+
+catkin_add_gtest(test_nominal_reference_inputs test/test_nominal_reference_inputs.cpp)
+target_link_libraries(test_nominal_reference_inputs ${PROJECT_NAME})
