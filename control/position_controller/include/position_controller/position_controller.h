@@ -68,7 +68,6 @@ class PositionController {
         const quadrotor_common::QuadrotorStateEstimate& state_estimate,
         const quadrotor_common::QuadrotorTrajectoryPoint& reference_state);
 
- protected:
  private:
 
         //////////////////////////////////

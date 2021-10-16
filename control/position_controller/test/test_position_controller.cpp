@@ -13,7 +13,7 @@
 namespace position_controller {
 
 /**
- *  @brief
+ *  @brief  Test fixture for testing the class PositionController.
  *  @detail
  */
 class PositionControllerTest : public ::testing::Test {
@@ -23,11 +23,12 @@ class PositionControllerTest : public ::testing::Test {
         ///////////////////////////////////////////////////
 
     /**
-     *  @brief
+     *  @brief PositionControllerTest's default constructor, called for each test to do set-up work.
      */
     PositionControllerTest() {}
+
     /**
-     *  @brief
+     *  @brief PositionControllerTest's default destructor, called for each test to do clean-up work.
      */
     ~PositionControllerTest() override {}
 
@@ -36,12 +37,12 @@ class PositionControllerTest : public ::testing::Test {
         //////////////////////////////////////
 
     /**
-     *  @brief
+     *  @brief For additional set-up work, called immediately after the constructor right before each test.
      */
     void SetUp() override {}
 
     /**
-     *  @brief
+     *  @brief For additional clean-up work, called immediately after each test right before the destructor.
      */
     void TearDown() override {}
 
