@@ -92,6 +92,18 @@ class ReferenceInputs {
         const Eigen::Quaterniond& attitude_estimate,
         const Eigen::Vector3d& y_C) const;
 
+    /**
+     *  @brief  Accessor for x_C constraint
+     *  @return computed x_C projection constraint
+     */
+    Eigen::Vector3d getX_C() { return x_C; }
+
+    /**
+     *  @brief  Accessor for y_C constraint
+     *  @return computed y_C projection constraint
+     */
+    Eigen::Vector3d getY_C() { return y_C; }
+
  private:
 
         //////////////////////////////////
