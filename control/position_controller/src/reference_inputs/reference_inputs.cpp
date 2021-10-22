@@ -13,8 +13,8 @@ namespace position_controller {
  *          check if norm(y_C x alpha) == 0
  *            if true, the check if norm(x_B_est - (x_B_est^T y_C)y_C) == 0
  *                      if true, set x_B = x_C
- *                      else, x_B = normalized(x_B_est - (x_B_est^T y_C)y_C)
- *            else, x_B = normalized(y_C x alpha)
+ *                      else, set x_B = normalized(x_B_est - (x_B_est^T y_C)y_C)
+ *            else, set x_B = normalized(y_C x alpha)
  */
 Eigen::Vector3d ReferenceInputs::computeRobustBodyXAxis(
     const Eigen::Vector3d& y_C,
@@ -44,7 +44,12 @@ Eigen::Vector3d ReferenceInputs::computeRobustBodyXAxis(
 }
 
 /**
- *
+ *  @detail Perform the following:
+ *          check if norm(beta x x_B) == 0
+ *            if true, check if norm(z_B_est x x_B) == 0
+ *                      if true, set y_B = y_C
+ *                      else, set y_B = normalized(z_B_est x x_B)
+ *            else, set y_B = normalized(beta x x_B)
  */
 Eigen::Vector3d ReferenceInputs::computeRobustBodyYAxis(
     const Eigen::Vector3d& x_B,

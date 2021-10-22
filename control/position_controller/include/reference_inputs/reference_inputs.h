@@ -79,7 +79,7 @@ class ReferenceInputs {
     /**
      *  @brief  Compute robust y_B from the input constraints, where y_B = (beta x x_B).
      *  @detail Handle singularities when x_B is aligned with beta or beta = 0.
-     *          The for an extreme case, set y_B = y_C as default solution.
+     *          Then for an extreme case, set y_B = y_C as default solution.
      *  @param  x_B               - robust computed body x axis from computeRobustBodyXAxis()
      *  @param  beta              - acceleration constraint
      *  @param  attitude_estimate - quadrotor state's attitude estimate
