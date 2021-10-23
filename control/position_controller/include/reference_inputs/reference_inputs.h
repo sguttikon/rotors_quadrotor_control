@@ -104,7 +104,7 @@ class ReferenceInputs {
      */
     Eigen::Vector3d getY_C() { return y_C; }
 
- private:
+ protected:
 
         //////////////////////////////////
         //////////// Constants ///////////
@@ -139,7 +139,7 @@ class ReferenceInputs {
     //  @brief
     quadrotor_common::QuadrotorStateEstimate state_estimate;
 
-    //  @brief
+    //  @brief  Constraints to enforce reference heading phi
     Eigen::Vector3d x_C, y_C;
 
 };  /* class ReferenceInputs */

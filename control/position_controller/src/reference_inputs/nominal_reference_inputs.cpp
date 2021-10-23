@@ -8,4 +8,27 @@
 
 namespace position_controller {
 
+/**
+ *  @detail
+ */
+Eigen::Quaterniond NominalReferenceInputs::computeDesiredAttitude() const {
+
+  // Constraints based on acceleration i.e. alpha, beta and gamma
+  const Eigen::Vector3d desired_acceleration = reference_state.acceleration \
+      - kGravity_;
+
+  // Compute robust x_B, y_B and z_B that statisfies all required constraints
+  const Eigen::Vector3d x_B = computeRobustBodyXAxis(
+      y_C, desired_acceleration, state_estimate.orientation, x_C);
+  const Eigen::Vector3d y_B = computeRobustBodyYAxis(
+      x_B, desired_acceleration, state_estimate.orientation, y_C);
+  const Eigen::Vector3d z_B = x_B.cross(y_B);
+
+  // Construct desired(reference) attitude
+  const Eigen::Matrix3d R_W_B((Eigen::Matrix3d() << x_B, y_B, z_B).finished());
+  const Eigen::Quaterniond q_W_B = Eigen::Quaterniond(R_W_B);
+
+  return q_W_B;
+}
+
 } /* namespace position_controller */

@@ -47,7 +47,7 @@ class NominalReferenceInputs : public ReferenceInputs {
      *  @param  attitude_estimate -
      *  @return desired_attitude  -
      */
-    Eigen::Quaterniond computeDesiredAttitude() const override {}
+    Eigen::Quaterniond computeDesiredAttitude() const override;
 
 };  /* class NominalReferenceInputs */
 

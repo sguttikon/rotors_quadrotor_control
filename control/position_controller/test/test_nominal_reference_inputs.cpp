@@ -62,7 +62,8 @@ class NominalReferenceInputsTest : public ::testing::Test {
 TEST_F(NominalReferenceInputsTest, InitializationTest) {
   EXPECT_EQ(reference_inputs_ptr, nullptr);
 
-  reference_inputs_ptr.reset(new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
   EXPECT_NE(reference_inputs_ptr, nullptr);
 
   reference_inputs_ptr.release();
@@ -75,40 +76,58 @@ TEST_F(NominalReferenceInputsTest, InitializationTest) {
 TEST_F(NominalReferenceInputsTest, ComputeRobustBodyXAxisTest) {
   Eigen::Vector3d x_B, x_B_gt, alpha;
 
-  // Case: x_B = normalized(x_B_est - (x_B_est^T y_C)y_C)
-  reference_inputs_ptr.reset(new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  state_est_ptr.reset(new quadrotor_common::QuadrotorStateEstimate());
+  state_ref_ptr.reset(new quadrotor_common::QuadrotorTrajectoryPoint());
+
+  // Case: x_B = x_C
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
   x_B = reference_inputs_ptr->computeRobustBodyXAxis(
-      reference_inputs_ptr->getY_C(), alpha, state_est_ptr->orientation, reference_inputs_ptr->getX_C());
+      Eigen::Vector3d::UnitX(), alpha, state_est_ptr->orientation,
+      Eigen::Vector3d::UnitY());
+  x_B_gt = Eigen::Vector3d(0., 1., 0.);
+  EXPECT_TRUE(x_B_gt.isApprox(x_B));
+
+  // Case: x_B = normalized(x_B_est - (x_B_est^T y_C)y_C)
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  x_B = reference_inputs_ptr->computeRobustBodyXAxis(
+      reference_inputs_ptr->getY_C(), alpha, state_est_ptr->orientation,
+      reference_inputs_ptr->getX_C());
   x_B_gt = Eigen::Vector3d(1., 0., 0.);
   EXPECT_TRUE(x_B_gt.isApprox(x_B));
 
   // Case: x_B = normalized(y_C x alpha)
-  reference_inputs_ptr.reset(new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
   alpha = Eigen::Vector3d::UnitX();
   x_B = reference_inputs_ptr->computeRobustBodyXAxis(
-      reference_inputs_ptr->getY_C(), alpha, state_est_ptr->orientation, reference_inputs_ptr->getX_C());
+      reference_inputs_ptr->getY_C(), alpha, state_est_ptr->orientation,
+      reference_inputs_ptr->getX_C());
   x_B_gt = Eigen::Vector3d(0., 0., -1.);
   EXPECT_TRUE(x_B_gt.isApprox(x_B));
-
-  // Case: x_B = x_C
-  // TODO
 }
 
 /**
- *  @brief
+ *  @brief  Test case to check if robust body yaxis is calculated correctly.
  */
 TEST_F(NominalReferenceInputsTest, ComputeRobustBodyYAxisTest) {
   Eigen::Vector3d x_B, y_B, y_B_gt, beta;
 
+  state_est_ptr.reset(new quadrotor_common::QuadrotorStateEstimate());
+  state_ref_ptr.reset(new quadrotor_common::QuadrotorTrajectoryPoint());
+
   // Case: y_B = y_C
-  reference_inputs_ptr.reset(new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
   y_B = reference_inputs_ptr->computeRobustBodyYAxis(
       x_B, beta, state_est_ptr->orientation, Eigen::Vector3d::UnitX());
   y_B_gt = Eigen::Vector3d(1., 0., 0.);
   EXPECT_TRUE(y_B_gt.isApprox(y_B));
 
   //  Case: y_B = normalized(z_B_est x x_B)
-  reference_inputs_ptr.reset(new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
   x_B = Eigen::Vector3d::UnitX();
   y_B = reference_inputs_ptr->computeRobustBodyYAxis(
       x_B, beta, state_est_ptr->orientation, reference_inputs_ptr->getY_C());
@@ -116,13 +135,52 @@ TEST_F(NominalReferenceInputsTest, ComputeRobustBodyYAxisTest) {
   EXPECT_TRUE(y_B_gt.isApprox(y_B));
 
   //  Case: y_B = normalized(beta x x_B)
-  reference_inputs_ptr.reset(new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
   x_B = Eigen::Vector3d::UnitX();
   beta = Eigen::Vector3d::UnitY();
   y_B = reference_inputs_ptr->computeRobustBodyYAxis(
       x_B, beta, state_est_ptr->orientation, reference_inputs_ptr->getY_C());
   y_B_gt = Eigen::Vector3d(0., 0., -1.);
   EXPECT_TRUE(y_B_gt.isApprox(y_B));
+}
+
+/**
+ *  @brief
+ */
+TEST_F(NominalReferenceInputsTest, ComputeDesiredAttitudeTest) {
+  Eigen::Quaterniond q, q_gt;
+
+  state_est_ptr.reset(new quadrotor_common::QuadrotorStateEstimate());
+  state_ref_ptr.reset(new quadrotor_common::QuadrotorTrajectoryPoint());
+
+  //  state_est_heading: 0 deg and state_ref_heading: 0 deg
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  q = reference_inputs_ptr->computeDesiredAttitude();
+  q_gt = Eigen::Quaterniond(
+      Eigen::AngleAxisd(state_ref_ptr->heading, Eigen::Vector3d::UnitZ()));
+  EXPECT_TRUE(q_gt.isApprox(q));
+
+  //  state_est_heading: 0 deg and state_ref_heading: 45 deg
+  state_ref_ptr->heading = 45 * (M_PI / 180);
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  q = reference_inputs_ptr->computeDesiredAttitude();
+  q_gt = Eigen::Quaterniond(
+      Eigen::AngleAxisd(state_ref_ptr->heading, Eigen::Vector3d::UnitZ()));
+  EXPECT_TRUE(q_gt.isApprox(q));
+
+  //  state_est_heading: 30 deg and state_ref_heading: 120 deg
+  state_est_ptr->orientation = Eigen::Quaterniond(
+      Eigen::AngleAxisd(30 * (M_PI / 180), Eigen::Vector3d::UnitZ()));
+  state_ref_ptr->heading = 120 * (M_PI / 180);
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  q = reference_inputs_ptr->computeDesiredAttitude();
+  q_gt = Eigen::Quaterniond(
+      Eigen::AngleAxisd(state_ref_ptr->heading, Eigen::Vector3d::UnitZ()));
+  EXPECT_TRUE(q_gt.isApprox(q));
 }
 
 } /* namespace position_controller */
