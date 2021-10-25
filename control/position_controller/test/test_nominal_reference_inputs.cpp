@@ -146,7 +146,7 @@ TEST_F(NominalReferenceInputsTest, ComputeRobustBodyYAxisTest) {
 }
 
 /**
- *  @brief
+ *  @brief  Test case to check if robust body attitude is calculated correctly.
  */
 TEST_F(NominalReferenceInputsTest, ComputeDesiredAttitudeTest) {
   Eigen::Quaterniond q, q_gt;
@@ -175,12 +175,54 @@ TEST_F(NominalReferenceInputsTest, ComputeDesiredAttitudeTest) {
   state_est_ptr->orientation = Eigen::Quaterniond(
       Eigen::AngleAxisd(30 * (M_PI / 180), Eigen::Vector3d::UnitZ()));
   state_ref_ptr->heading = 120 * (M_PI / 180);
+  state_ref_ptr->acceleration = Eigen::Vector3d(0.0, 0.0, -9.81);
   reference_inputs_ptr.reset(
       new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
   q = reference_inputs_ptr->computeDesiredAttitude();
   q_gt = Eigen::Quaterniond(
       Eigen::AngleAxisd(state_ref_ptr->heading, Eigen::Vector3d::UnitZ()));
   EXPECT_TRUE(q_gt.isApprox(q));
+}
+
+/**
+ *  @brief  Test case to check if collective thrust is calculated correctly.
+ */
+TEST_F(NominalReferenceInputsTest, computeDesiredCollectiveThrustTest) {
+  Eigen::Quaterniond q;
+  float c, c_gt;
+
+  state_est_ptr.reset(new quadrotor_common::QuadrotorStateEstimate());
+  state_ref_ptr.reset(new quadrotor_common::QuadrotorTrajectoryPoint());
+
+  state_est_ptr->position.z() = 1.0;
+  state_ref_ptr->position.z() = 1.0;
+
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  q = reference_inputs_ptr->computeDesiredAttitude();
+  c = reference_inputs_ptr->computeDesiredCollectiveThrust(q);
+  c_gt = 9.81;
+  EXPECT_EQ(c_gt, c);
+
+  state_ref_ptr->heading = 45 * (M_PI / 180);
+  state_ref_ptr->acceleration = Eigen::Vector3d(0.0, 0.0, 9.81);
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  q = reference_inputs_ptr->computeDesiredAttitude();
+  c = reference_inputs_ptr->computeDesiredCollectiveThrust(q);
+  c_gt = 2*9.81;
+  EXPECT_EQ(c_gt, c);
+
+  state_est_ptr->orientation = Eigen::Quaterniond(
+      Eigen::AngleAxisd(30 * (M_PI / 180), Eigen::Vector3d::UnitZ()));
+  state_ref_ptr->heading = 120 * (M_PI / 180);
+  state_ref_ptr->acceleration = Eigen::Vector3d(0.0, 0.0, -9.81);
+  reference_inputs_ptr.reset(
+      new NominalReferenceInputs(*state_est_ptr, *state_ref_ptr));
+  q = reference_inputs_ptr->computeDesiredAttitude();
+  c = reference_inputs_ptr->computeDesiredCollectiveThrust(q);
+  c_gt = 0.0;
+  EXPECT_EQ(c_gt, c);
 }
 
 } /* namespace position_controller */

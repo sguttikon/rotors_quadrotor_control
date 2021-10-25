@@ -9,10 +9,10 @@
 namespace position_controller {
 
 /**
- *  @detail
+ *  @detail In nominal dynamics scenario, constraints: alpha, beta and gamma
+ *          values are equal i.e. to desired acceleration.
  */
 Eigen::Quaterniond NominalReferenceInputs::computeDesiredAttitude() const {
-
   // Constraints based on acceleration i.e. alpha, beta and gamma
   const Eigen::Vector3d desired_acceleration = reference_state.acceleration \
       - kGravity_;
@@ -29,6 +29,20 @@ Eigen::Quaterniond NominalReferenceInputs::computeDesiredAttitude() const {
   const Eigen::Quaterniond q_W_B = Eigen::Quaterniond(R_W_B);
 
   return q_W_B;
+}
+
+/**
+ *  @detail
+ */
+float NominalReferenceInputs::computeDesiredCollectiveThrust(
+    const Eigen::Quaterniond& q_W_B) const {
+  // Constraints based on acceleration i.e. alpha, beta and gamma
+  const Eigen::Vector3d desired_acceleration = reference_state.acceleration \
+      - kGravity_;
+  const Eigen::Vector3d z_B = q_W_B * Eigen::Vector3d::UnitZ();
+
+  const float c = z_B.dot(desired_acceleration);
+  return c;
 }
 
 } /* namespace position_controller */

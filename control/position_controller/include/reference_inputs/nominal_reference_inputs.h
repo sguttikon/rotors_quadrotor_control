@@ -41,13 +41,22 @@ class NominalReferenceInputs : public ReferenceInputs {
     ~NominalReferenceInputs() {}
 
     /**
-     *  @brief
-     *  @detail
-     *  @param  reference_state   -
-     *  @param  attitude_estimate -
-     *  @return desired_attitude  -
+     *  @brief  Compute reference orientation matrix R.
+     *  @detail We use the following equations for derivation:
+     *          1. v^dot = -g*z_W + c*z_B
+     *          2. reference heading phi
+     *  @return computed desired attitude based on quadrotor's state estimate and reference state.
      */
     Eigen::Quaterniond computeDesiredAttitude() const override;
+
+    /**
+     *  @brief  Compute reference collective thrust c.
+     *  @detail We use the following equation for derivation:
+     *          1. v^dot = -g*z_W + c*z_B
+     *  @return computed desired collective thrust.
+     */
+    virtual float computeDesiredCollectiveThrust(
+        const Eigen::Quaterniond& q_W_B) const override;
 
 };  /* class NominalReferenceInputs */
 
