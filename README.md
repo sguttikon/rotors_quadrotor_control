@@ -9,6 +9,10 @@
 
 #### Installation
 0. Assuming required setup is done.
+  ```
+    $ sudo apt-get install ros-melodic-desktop-full ros-melodic-octomap-ros
+    $ sudo apt-get install protobuf-compiler libprotobuf-dev libgoogle-glog-dev
+  ```
 1. Create a ros workspace, if doesn't exist.
   ```
     $ mkdir -p ~/catkin_ws/src
