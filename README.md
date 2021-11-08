@@ -1,8 +1,8 @@
 # rotors_quadrotor_control
 
 #### Verified Setup On:
-* Operating System: Ubuntu 20.04.3 LTS
-* ROS Version: Noetic Ninjemys
+* Operating System: Ubuntu 18.04.6 LTS
+* ROS Version: Melodic Morenia
 
 #### Additional Packages:
 * catkin-tools [for installation](https://catkin-tools.readthedocs.io/en/latest/installing.html)
@@ -23,7 +23,9 @@
   ```
 3. Build the ros workspace.
   ```
+  
     ~/catkin_ws/src $ cd ~/catkin_ws/
+    ~/catkin_ws $ source /opt/ros/melodic/setup.bash
     ~/catkin_ws $ catkin build
   ```
 4. 
