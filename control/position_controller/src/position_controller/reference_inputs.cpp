@@ -24,12 +24,12 @@ ReferenceInputs::ReferenceInputs(
   y_C = q_heading * Eigen::Vector3d::UnitY();
 
   // reference inputs
-  reference_inputs.orientation = computeReferenceOrientation();
-  reference_inputs.collective_thrust = computeReferenceCollectiveThrust(
-      reference_inputs.orientation);
+  reference.orientation = computeReferenceOrientation();
+  reference.collective_thrust = computeReferenceCollectiveThrust(
+      reference.orientation);
   computeReferenceBodyratesAndDerivative(
-      reference_inputs.orientation, reference_inputs.collective_thrust,
-      reference_inputs.bodyrates, reference_inputs.angular_acceleration);
+      reference.orientation, reference.collective_thrust,
+      reference.bodyrates, reference.angular_acceleration);
 }
 
 /**

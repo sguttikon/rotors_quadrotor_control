@@ -25,7 +25,7 @@ namespace position_controller {
  *          required for high-level position control.
  */
 class ReferenceInputs {
-public:
+ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         /////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ public:
      *
      */
 
-private:
+ private:
 
         ////////////////////////////////////
         ////////////  Constants  ///////////
@@ -121,7 +121,7 @@ private:
     quadrotor_common::QuadrotorTrajectoryPoint reference_state;
 
     //  @brief  Output quadrotor's reference inputs
-    quadrotor_common::QuadrotorControlCommand reference_inputs;
+    quadrotor_common::QuadrotorControlCommand reference;
 
     //  @brief  Constraints to enforce reference heading phi
     Eigen::Vector3d x_C, y_C;

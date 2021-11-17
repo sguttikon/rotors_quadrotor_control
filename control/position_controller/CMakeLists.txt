@@ -42,5 +42,8 @@ cs_export()
 catkin_add_gtest(test_position_controller test/test_position_controller.cpp)
 target_link_libraries(test_position_controller ${PROJECT_NAME})
 
-catkin_add_gtest(test_nominal_reference_inputs test/test_nominal_reference_inputs.cpp)
-target_link_libraries(test_nominal_reference_inputs ${PROJECT_NAME})
+catkin_add_gtest(test_reference_inputs test/test_reference_inputs.cpp)
+target_link_libraries(test_reference_inputs ${PROJECT_NAME})
+
+# catkin_add_gtest(test_nominal_reference_inputs test/test_nominal_reference_inputs.cpp)
+# target_link_libraries(test_nominal_reference_inputs ${PROJECT_NAME})
