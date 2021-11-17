@@ -54,6 +54,21 @@ public:
      */
     void computeReferenceOrientation();
 
+    /**
+     *  @brief  Compute the reference collective thrust c
+     */
+    void computeReferenceCollectiveThrust();
+
+    /**
+     *  @brief  Compute the reference bodyrates omega
+     */
+    void computeReferenceBodyrates();
+
+    /**
+     *  @brief  Compute the reference angular accelerations omega_dot
+     */
+    void computeReferenceAngularAccelerations();
+
 private:
 
         ////////////////////////////////////
@@ -97,6 +112,15 @@ private:
     //  @brief  quadrotor's reference orientation input
     Eigen::Vector3d x_B, y_B, z_B;
     Eigen::Quaterniond orientation;
+
+    //  @brief  quadrotor's reference collective thrust input
+    double c = 0;
+
+    //  @brief  quadrotor's reference bodyrates input
+    Eigen::Vector3d bodyrates;
+
+    //  @brief  quadrotor's reference angular accelerations input
+    Eigen::Vector3d angular_accelerations;
 
     //  @brief  Constraints to enfore reference heading phi
     Eigen::Vector3d x_C, y_C;
