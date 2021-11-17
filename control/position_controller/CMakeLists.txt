@@ -15,8 +15,8 @@ catkin_simple(ALL_DEPS_REQUIRED)
 ## Declare a C++ library
 cs_add_library(${PROJECT_NAME}
   src/position_controller/position_controller.cpp
-  src/reference_inputs/reference_inputs.cpp
-  src/reference_inputs/nominal_reference_inputs.cpp
+  src/position_controller/reference_inputs.cpp
+  # src/reference_inputs/nominal_reference_inputs.cpp
 )
 
 ## Declare a C++ executable
