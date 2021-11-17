@@ -12,6 +12,7 @@
 
 //  quadrotor_common dependencies
 #include "quadrotor_common/math.h"
+#include "quadrotor_common/quadrotor_control_command.h"
 #include "quadrotor_common/quadrotor_state_estimate.h"
 #include "quadrotor_common/quadrotor_trajectory_point.h"
 
@@ -48,26 +49,8 @@ public:
         ////////////////////////////////////////
 
     /**
-     *  @brief  Compute the robust reference orientation R = [x_B, y_B, z_B]
-     *  @detail for x_B refer computeRobustBodyXAxis()
-     *          for y_B refer computeRobustBodyYAxis()
+     *
      */
-    void computeReferenceOrientation();
-
-    /**
-     *  @brief  Compute the reference collective thrust c
-     */
-    void computeReferenceCollectiveThrust();
-
-    /**
-     *  @brief  Compute the reference bodyrates omega
-     */
-    void computeReferenceBodyrates();
-
-    /**
-     *  @brief  Compute the reference angular accelerations omega_dot
-     */
-    void computeReferenceAngularAccelerations();
 
 private:
 
@@ -86,6 +69,33 @@ private:
         ////////////////////////////////////////
 
     /**
+     *  @brief  Compute the robust reference orientation R = [x_B, y_B, z_B]
+     *  @detail for x_B refer computeRobustBodyXAxis()
+     *          for y_B refer computeRobustBodyYAxis()
+     */
+    Eigen::Quaterniond computeReferenceOrientation() const;
+
+    /**
+     *  @brief  Compute the reference collective thrust c
+     *  @param  orientation - orientation computed from computeReferenceOrientation()
+     */
+    double computeReferenceCollectiveThrust(
+         const Eigen::Quaterniond& orientation) const;
+
+    /**
+     *  @brief  Compute the reference bodyrates omega and angular accelerations omega_dot
+     *  @param  orientation - orientation computed from computeReferenceOrientation()
+     *  @param  c - thrust computed from computeReferenceCollectiveThrust()
+     *  @param  bodyrates     - computed bodyrates
+     *  @param  bodyrates_dot - computed angular accelerations
+     */
+    void computeReferenceBodyratesAndDerivative(
+        const Eigen::Quaterniond& orientation,
+        const double c,
+        Eigen::Vector3d& bodyrates,
+        Eigen::Vector3d& bodyrates_dot) const;
+
+    /**
      *  @brief  Compute robust x_B from the input constraints, where x_B = (y_C x alpha)
      *  @detail Handle singularities when y_C is aligned with alpha or alpha = 0.
      *          For an extreme case solution we set x_B = x_C.
@@ -96,8 +106,9 @@ private:
      *  @brief  Compute robust y_B from the input constraints, where y_B = (beta x x_B)
      *  @detail Handle singularities when x_B is aligned with beta or beta = 0.
      *          For an extreme case solution we set y_B = y_C.
+     *  @param  x_B   - robust x_B computed from computeRobustBodyXAxis()
      */
-    Eigen::Vector3d computeRobustBodyYAxis() const;
+    Eigen::Vector3d computeRobustBodyYAxis(const Eigen::Vector3d& x_B) const;
 
         ////////////////////////////////////////
         ////////////  Class Members  ///////////
@@ -109,20 +120,10 @@ private:
     //  @brief  Input quadrotor's reference state to track
     quadrotor_common::QuadrotorTrajectoryPoint reference_state;
 
-    //  @brief  quadrotor's reference orientation input
-    Eigen::Vector3d x_B, y_B, z_B;
-    Eigen::Quaterniond orientation;
+    //  @brief  Output quadrotor's reference inputs
+    quadrotor_common::QuadrotorControlCommand reference_inputs;
 
-    //  @brief  quadrotor's reference collective thrust input
-    double c = 0;
-
-    //  @brief  quadrotor's reference bodyrates input
-    Eigen::Vector3d bodyrates;
-
-    //  @brief  quadrotor's reference angular accelerations input
-    Eigen::Vector3d angular_accelerations;
-
-    //  @brief  Constraints to enfore reference heading phi
+    //  @brief  Constraints to enforce reference heading phi
     Eigen::Vector3d x_C, y_C;
 
     // TODO: get the values from config

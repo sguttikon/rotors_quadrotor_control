@@ -23,33 +23,55 @@ ReferenceInputs::ReferenceInputs(
   x_C = q_heading * Eigen::Vector3d::UnitX();
   y_C = q_heading * Eigen::Vector3d::UnitY();
 
+  // reference inputs
+  reference_inputs.orientation = computeReferenceOrientation();
+  reference_inputs.collective_thrust = computeReferenceCollectiveThrust(
+      reference_inputs.orientation);
+  computeReferenceBodyratesAndDerivative(
+      reference_inputs.orientation, reference_inputs.collective_thrust,
+      reference_inputs.bodyrates, reference_inputs.angular_acceleration);
 }
 
 /**
  *  @detail
  */
-void ReferenceInputs::computeReferenceOrientation() {
-  x_B = computeRobustBodyXAxis();
-  y_B = computeRobustBodyYAxis();
-  z_B = x_B.cross(y_B);
+Eigen::Quaterniond ReferenceInputs::computeReferenceOrientation() const {
+  const Eigen::Vector3d x_B = computeRobustBodyXAxis();
+  const Eigen::Vector3d y_B = computeRobustBodyYAxis(x_B);
+  const Eigen::Vector3d z_B = x_B.cross(y_B);
 
   const Eigen::Matrix3d R_W_B((Eigen::Matrix3d() << x_B, y_B, z_B).finished());
-  orientation = Eigen::Quaterniond(R_W_B);
+  const Eigen::Quaterniond orientation(R_W_B);
+  return orientation;
 }
 
 /**
  *  @detail c = z_B^T(v_dot + g.z_W + dz.v)
  */
-void ReferenceInputs::computeReferenceCollectiveThrust() {
+double ReferenceInputs::computeReferenceCollectiveThrust(
+    const Eigen::Quaterniond& orientation) const {
   const Eigen::Vector3d gamma = reference_state.acceleration - kGravity_ + \
       dz * reference_state.velocity;
-  c = z_B.dot(gamma);
+  const Eigen::Vector3d z_B = orientation * Eigen::Vector3d::UnitZ();
+
+  const double thrust = z_B.dot(gamma);
+  return thrust;
 }
 
 /**
  *  @detail
  */
-void ReferenceInputs::computeReferenceBodyrates() {
+void ReferenceInputs::computeReferenceBodyratesAndDerivative(
+    const Eigen::Quaterniond& orientation,
+    const double c,
+    Eigen::Vector3d& bodyrates,
+    Eigen::Vector3d& bodyrates_dot) const{
+  const Eigen::Vector3d x_B = orientation * Eigen::Vector3d::UnitX();
+  const Eigen::Vector3d y_B = orientation * Eigen::Vector3d::UnitY();
+  const Eigen::Vector3d z_B = orientation * Eigen::Vector3d::UnitZ();
+
+  // ------------- body rates ------------- //
+  double omega_x, omega_y, omega_z;
   const double B1 = c - (dz - dx)*(z_B.dot(reference_state.velocity));
   const double C1 = -(dx - dy)*(y_B.dot(reference_state.velocity));
   const double D1 = x_B.dot(reference_state.jerk) + \
@@ -65,27 +87,30 @@ void ReferenceInputs::computeReferenceBodyrates() {
   // check if B1*C3 - B3*C1 is 0
   const double denominator = B1*C3 - B3*C1;
   if (quadrotor_common::isAlmostZero(denominator, kAlmostZeroValueThreshold_)) {
-    bodyrates = Eigen::Vector3d::Zero();
+    omega_x = 0.0;
+    omega_y = 0.0;
+    omega_z = 0.0;
   } //  zero bodyrates
   else{
     if (quadrotor_common::isAlmostZero(A2, kAlmostZeroValueThreshold_)) {
-      bodyrates.x() = 0.0;
+      omega_x = 0.0;
     } //  zero bodyrates.x()
     else {
-      bodyrates.x() = (-B1*C2*D3 + B1*C3*D2 - B3*C1*D2 + B3*C2*D1)/ \
+      omega_x = (-B1*C2*D3 + B1*C3*D2 - B3*C1*D2 + B3*C2*D1)/ \
           (A2*denominator);
     }
-    bodyrates.y() = (-C1*D3 + C3*D1)/denominator;
-    bodyrates.z() = ( B1*D3 - B3*D1)/denominator;
+    omega_y = (-C1*D3 + C3*D1)/denominator;
+    omega_z = ( B1*D3 - B3*D1)/denominator;
   } //  compute bodyrates
-}
 
-/**
- *  @detail
- */
-void ReferenceInputs::computeReferenceAngularAccelerations() {
+  bodyrates.x() = omega_x;
+  bodyrates.y() = omega_y;
+  bodyrates.z() = omega_z;
+
+  // ------------- angular accelerations ------------- //
+  double omega_dot_x, omega_dot_y, omega_dot_z;
   const Eigen::Matrix3d omega_hat = quadrotor_common::skew(bodyrates);
-  const Eigen::Matrix3d R((Eigen::Matrix3d() << x_B, y_B, z_B).finished());
+  const Eigen::Matrix3d R = orientation.toRotationMatrix();
   const Eigen::Matrix3d D = Eigen::Vector3d(dx, dy, dz).asDiagonal();
   const double c_dot = z_B.dot(reference_state.jerk) + \
       bodyrates.x()*(dy - dz)*(y_B.dot(reference_state.velocity)) + \
@@ -99,38 +124,36 @@ void ReferenceInputs::computeReferenceAngularAccelerations() {
       ) * R.transpose() * reference_state.acceleration + \
       R * D * R.transpose() * reference_state.jerk;
 
-  const double B1 = c - (dz - dx)*(z_B.dot(reference_state.velocity));
-  const double C1 = -(dx - dy)*(y_B.dot(reference_state.velocity));
   const double E1 = x_B.dot(reference_state.snap) - 2*c_dot * bodyrates.y() - \
       c * bodyrates.x() * bodyrates.z() + x_B.dot(xi);
-  const double A2 = c + (dy - dz)*(z_B.dot(reference_state.velocity));
-  const double C2 = (dx - dy)*(x_B.dot(reference_state.velocity));
   const double E2 = -y_B.dot(reference_state.snap) - 2*c_dot * bodyrates.x() + \
       c * bodyrates.y() * bodyrates.z() - y_B.dot(xi);
-  const double B3 = -y_C.dot(z_B);
-  const double C3 = (y_C.cross(z_B)).norm();
   const double E3 = reference_state.heading_acceleration * x_C.dot(x_B) + \
       2*reference_state.heading_rate * bodyrates.z() * x_C.dot(y_B) - \
       2*reference_state.heading_rate * bodyrates.y() * x_C.dot(z_B) - \
       bodyrates.x() * bodyrates.y() * y_C.dot(y_B) - \
       bodyrates.x() * bodyrates.z() * y_C.dot(z_B);
 
-  // check if B1*C3 - B3*C1 is 0
-  const double denominator = B1*C3 - B3*C1;
   if (quadrotor_common::isAlmostZero(denominator, kAlmostZeroValueThreshold_)) {
-    angular_accelerations = Eigen::Vector3d::Zero();
+    omega_dot_x = 0.0;
+    omega_dot_y = 0.0;
+    omega_dot_z = 0.0;
   } //  zero angular accelerations
   else{
     if (quadrotor_common::isAlmostZero(A2, kAlmostZeroValueThreshold_)) {
-      angular_accelerations.x() = 0.0;
-    } //  zero angular_accelerations.x()
+      omega_dot_x = 0.0;
+    } //  zero bodyrates_dot.x()
     else {
-      angular_accelerations.x() = (-B1*C2*E3 + B1*C3*E2 - B3*C1*E2 + B3*C2*E1)/ \
+      omega_dot_x = (-B1*C2*E3 + B1*C3*E2 - B3*C1*E2 + B3*C2*E1)/ \
           (A2*denominator);
     }
-    angular_accelerations.y() = (-C1*E3 + C3*E1)/denominator;
-    angular_accelerations.z() = ( B1*E3 - B3*E1)/denominator;
+    omega_dot_y = (-C1*E3 + C3*E1)/denominator;
+    omega_dot_z = ( B1*E3 - B3*E1)/denominator;
   } //  compute angular accelerations
+
+  bodyrates_dot.x() = omega_dot_x;
+  bodyrates_dot.y() = omega_dot_y;
+  bodyrates_dot.z() = omega_dot_z;
 }
 
 /**
@@ -178,7 +201,8 @@ Eigen::Vector3d ReferenceInputs::computeRobustBodyXAxis() const {
  *                      else, set y_B = normalized(z_B_est x x_B)
  *            else, set y_B = normalized(beta x x_B)
  */
-Eigen::Vector3d ReferenceInputs::computeRobustBodyYAxis() const {
+Eigen::Vector3d ReferenceInputs::computeRobustBodyYAxis(
+    const Eigen::Vector3d& x_B) const {
   const Eigen::Vector3d beta = reference_state.acceleration - kGravity_ + \
       dy * reference_state.velocity;
   Eigen::Vector3d y_B = beta.cross(x_B);
