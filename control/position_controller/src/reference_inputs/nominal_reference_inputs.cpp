@@ -32,7 +32,8 @@ Eigen::Quaterniond NominalReferenceInputs::computeDesiredAttitude() const {
 }
 
 /**
- *  @detail
+ *  @detail In nominal dynamics scenario, we can further simplfy as
+ *          collective_thrust = norm(desired_acceleration)
  */
 float NominalReferenceInputs::computeDesiredCollectiveThrust(
     const Eigen::Quaterniond& q_W_B) const {
@@ -43,6 +44,15 @@ float NominalReferenceInputs::computeDesiredCollectiveThrust(
 
   const float c = z_B.dot(desired_acceleration);
   return c;
+}
+
+/**
+ *  @detail
+ */
+Eigen::Vector3d NominalReferenceInputs::computeDesiredBodyRates(
+    const Eigen::Quaterniond& q_W_B,
+    const float collective_thrust) const {
+
 }
 
 } /* namespace position_controller */

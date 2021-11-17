@@ -56,7 +56,7 @@ class ReferenceInputs {
     /**
      *  @brief  Compute reference orientation matrix R.
      *  @detail We use the following equations for derivation:
-     *          1. v^dot = -g*z_W + c*z_B - R*D*R^T*V
+     *          1. v_dot = -g*z_W + c*z_B - R*D*R^T*V
      *          2. reference heading phi
      *  @return computed desired attitude based on quadrotor's state estimate and reference state.
      */
@@ -65,11 +65,22 @@ class ReferenceInputs {
     /**
      *  @brief  Compute reference collective thrust c.
      *  @detail We use the following equation for derivation:
-     *          1. v^dot = -g*z_W + c*z_B - R*D*R^T*V
+     *          1. v_dot = -g*z_W + c*z_B - R*D*R^T*V
      *  @return computed desired collective thrust.
      */
     virtual float computeDesiredCollectiveThrust(
         const Eigen::Quaterniond& q_W_B) const = 0;
+
+    /**
+     *  @brief  Compute reference body rates omega.
+     *  @detail We use the following equation for derivation and
+     *          and under the differential flatness assumption:
+     *          1. v_dot = -g*z_W + c*z_B - R*D*R^T*V
+     *          2. R_dot = R*bodyrates_hat
+     */
+    virtual Eigen::Vector3d computeDesiredBodyRates(
+        const Eigen::Quaterniond& q_W_B,
+        const float collective_thrust) const = 0;
 
     /**
      *  @brief  Compute robust x_B from the input constraints, where x_B = (y_C x alpha).
